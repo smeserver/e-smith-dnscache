@@ -1,0 +1,469 @@
+Index: e-smith-dnscache/createlinks
+diff -u e-smith-dnscache/createlinks:1.10 e-smith-dnscache/createlinks:1.11
+--- e-smith-dnscache/createlinks:1.10	Wed Mar 30 14:02:54 2005
++++ e-smith-dnscache/createlinks	Wed Mar 30 14:33:39 2005
+@@ -5,12 +5,6 @@
+ templates2events('/var/service/dnscache/root/services/@',
+     qw(bootstrap-console-save console-save));
+ 
+-foreach (qw(env/CACHESIZE env/IP env/IPSEND runenv))
+-{
+-    templates2events("/var/service/dnscache/$_",
+-	qw(bootstrap-console-save console-save));
+-}
+-
+ foreach my $event (qw(
+ 	console-save
+ 	network-create
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $cachesize = db_get_prop($confref, 'dnscache', 'CacheSize')
+-	|| "1000000";
+-    "$cachesize";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $ip = db_get_prop($confref, 'dnscache', 'ListenIP')
+-	|| "$LocalIP";
+-    "$ip";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $sendip = db_get_prop($confref, 'dnscache', 'SendIP')
+-	|| "0.0.0.0";
+-    "$sendip";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:1.1	Tue Aug 24 21:10:18 2004
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit	Wed Dec 31 19:00:00 1969
+@@ -1,4 +0,0 @@
+-{
+-    # vim: ft=perl:
+-    $OUT = "DATALIMIT=" . ($dnscache{DataLimit} || "3000000");
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:1.1	Tue Aug 24 21:10:18 2004
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly	Wed Dec 31 19:00:00 1969
+@@ -1,4 +0,0 @@
+-{
+-    # vim: ft=perl:
+-    $OUT = "FORWARDONLY=" . ($dnscache{Forwarder} ? 1 : 0);
+-}
+Index: e-smith-dnscache/root/var/service/dnscache/run
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.4 e-smith-dnscache/root/var/service/dnscache/run:1.5
+--- e-smith-dnscache/root/var/service/dnscache/run:1.4	Wed Mar 30 14:02:54 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Wed Mar 30 14:33:40 2005
+@@ -1,13 +1,202 @@
+-#! /bin/sh
++#!/usr/bin/perl -w
++#----------------------------------------------------------------------
++# copyright (C) 1999-2005 Mitel Networks Corporation
++# 
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
++# 
++# Technical support for this program is available from Mitel Networks 
++# Please visit our web site www.mitel.com/sme/ for details.
++#----------------------------------------------------------------------
++package esmith;
+ 
+-exec 2>&1
+-exec <seed
+-. ./runenv
+-if [ "$FORWARDONLY" = "1" ]
+-then
+-    export FORWARDONLY
+-fi
+-./control/h
+-exec envdir ./env envuidgid dnscache \
+-    softlimit -o250 -d "$DATALIMIT" \
+-    /usr/local/bin/dnscache
++use strict;
++use Errno;
++use esmith::ConfigDB;
++use esmith::DomainsDB;
++use esmith::NetworksDB;
++use esmith::util;
++
++sub allow_networks_2access_cache;
++sub delegate_domains_2DNS;
++
++open(STDIN, "<./seed") or warn "Failed to redirect input from seed file: $!";
++open(STDERR, ">&STDOUT") or warn "Failed to redirect stderr to stdout: $!";;
++
++my $config = esmith::ConfigDB->open or die "Could not open config db.";
++my $dnscache = $config->get('dnscache');
++unless ($dnscache)
++{
++    die "dnscache not configured in configuration db\n";
++}
++
++my $localip = $config->get('LocalIP');
++unless ($localip)
++{
++    die "localip not configured in configuration db\n";
++}
++
++my $domains = esmith::DomainsDB->open or die "Could not open Domains db.";
++my $nets = esmith::NetworksDB->open or die "Could not open Networks db.";
++
++#------------------------------------------------------------
++# Configure DNS cache access.
++#------------------------------------------------------------
++
++# allow my networks to access the nameserver cache
++my @localnetworks = ();
++my %reversenets = ();
++
++foreach my $net ($nets->get_all_by_prop('type', 'network'))
++{
++    my $mask = $net->prop('Mask');
++    my $key = $net->key;
++    my $systemlocalnetwork = $net->prop('SystemLocalNetwork') || 'no';
++    my $nameserver = $net->prop('NameServer') ||
++	($systemlocalnetwork eq 'yes') ? '127.0.0.1' : 'none';
++    push @localnetworks,
++        esmith::util::computeAllLocalNetworkPrefixes ($key, $mask);
++
++    my $reverse = esmith::util::computeLocalNetworkReversed ($key, $mask);
++    # Remove the trailing period provided by computeLocalNetworkReversed
++    $reverse =~ s/\.$//;
++    $reversenets{$reverse} = $nameserver unless ($nameserver eq 'none');
++}
++
++allow_networks_2access_cache(@localnetworks);
++
++if ($dnscache->prop('Forwarder'))
++{
++    # We handle no domains locally
++    delegate_domains_2DNS();
++}
++else
++{
++    delegate_domains_2DNS(
++        %reversenets,
++            map { $_->key => $_->prop('NameServer') || '127.0.0.1' } 
++            ($domains->get_all_by_prop('type', 'domain'), 
++            $domains->get_all_by_prop('type', 'domain-remote')
++    )
++);
++}
++
++my $datalimit = $dnscache->prop('DataLimit') || 3000000;
++my $forwarder = $dnscache->prop('Forwarder');
++if ($forwarder)
++{
++    $ENV{FORWARDONLY} = '1';
++}
++$ENV{IP} = $dnscache->prop('ListenIP') || $localip->value;
++$ENV{SENDIP} = $dnscache->prop('SendIP') || '0.0.0.0';
++$ENV{CACHESIZE} = $dnscache->prop('CacheSize') || 1000000;
++
++exec("envuidgid", "dnscache", "softlimit", "-o250", "-d", "$datalimit",
++    "/usr/local/bin/dnscache")
++    or die "failed to execute envuidgid/softlimit/dnscache: $!";
++# NOTREACHED
++exit (1);
++
++sub allow_networks_2access_cache
++{
++    my %access = map { $_ => 1 } @_;
++
++    my $dir = '/var/service/dnscache/root/ip';
++    chdir $dir
++        || die "Cannot chdir to $dir: $!\n";
++    unless (-f "127.0.0.1")
++    {
++        open F,">127.0.0.1"
++            || die "Cannot add access file for loopback network: $!\n";
++        close F;
++    }
++
++    opendir(ACCESS, '.') or
++    die "Cannot read dnscache access directory: $!";
++
++    foreach my $aclfile (readdir (ACCESS))
++    {
++        next if "$aclfile" eq "127.0.0.1";
++        next if -d "$aclfile";
++        if (exists $access{$aclfile})
++        {
++            # Cross this one off the list so that we don't bother creating it
++            delete $access{$aclfile};
++        }
++        else
++        {
++            # We no longer need this entry
++            unlink "$aclfile" or
++            warn "Could not delete dnscache access file $dir/$aclfile: $!\n";
++        }
++    }
++    closedir(ACCESS);
++
++    foreach my $aclfile (keys %access)
++    {
++        link "127.0.0.1", $aclfile or 
++        die "Cannot add network access for $aclfile: $!\n";
++    }
++}
++
++sub delegate_domains_2DNS
++{
++    my %delegations = @_;
++    my $serversdir = '/var/service/dnscache/root/servers';
++    chdir $serversdir
++        || die "Cannot chdir to $serversdir: $!\n";
++    unless (-f "127.in-addr.arpa")
++    {
++        open F,">127.in-addr.arpa"
++            || die "Cannot add delegation for loopback network: $!\n";
++        print F "127.0.0.1\n";
++        close F;
++    }
++
++    opendir(SERVERS, '.') or
++    die "Cannot read dnscache servers directory: $!";
++
++    foreach my $delegatefile (readdir (SERVERS))
++    {
++        next if "$delegatefile" eq '@';
++
++        next if "$delegatefile" eq "127.in-addr.arpa";
++
++        next if -d "$delegatefile";
++
++        unless (exists $delegations{$delegatefile})
++        {
++            # We no longer need this entry
++            unlink "$delegatefile" or
++            warn "Could not delete dnscache domain file $delegatefile: $!\n";
++        }
++    }
++    closedir(SERVERS);
++
++    foreach my $delegatefile (keys %delegations)
++    {
++        if (-l $delegatefile)
++        {
++            # Legacy symlink - we use files now
++            unlink "$delegatefile" or
++            warn "Could not delete dnscache domain link $delegatefile: $!\n";
++        }
++        my $nameserver = $delegations{$delegatefile};
++
++        open DELEGATE, ">$delegatefile" or
++            die "Couldn't create $delegatefile with value $nameserver\n";
++        print DELEGATE "$nameserver\n";
++        close DELEGATE;
++    }
++}
+Index: e-smith-dnscache/root/var/service/dnscache/control/h
+diff -u e-smith-dnscache/root/var/service/dnscache/control/h:1.2 e-smith-dnscache/root/var/service/dnscache/control/h:removed
+--- e-smith-dnscache/root/var/service/dnscache/control/h:1.2	Wed Mar 30 14:02:54 2005
++++ e-smith-dnscache/root/var/service/dnscache/control/h	Wed Dec 31 19:00:00 1969
+@@ -1,180 +0,0 @@
+-#!/usr/bin/perl -w
+-#----------------------------------------------------------------------
+-# copyright (C) 1999-2005 Mitel Networks Corporation
+-# 
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, write to the Free Software
+-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+-# 
+-# Technical support for this program is available from Mitel Networks 
+-# Please visit our web site www.mitel.com/sme/ for details.
+-#----------------------------------------------------------------------
+-package esmith;
+-
+-use strict;
+-use Errno;
+-use esmith::ConfigDB;
+-use esmith::DomainsDB;
+-use esmith::NetworksDB;
+-use esmith::util;
+-
+-sub allow_networks_2access_cache;
+-sub delegate_domains_2DNS;
+-
+-my $config = esmith::ConfigDB->open or die "Could not open config db.";
+-my $dnscache = $config->get('dnscache');
+-unless ($dnscache)
+-{
+-    warn "dnscache not configured in configuration db\n";
+-    exit 0;
+-}
+-
+-my $domains = esmith::DomainsDB->open or die "Could not open Domains db.";
+-my $nets = esmith::NetworksDB->open or die "Could not open Networks db.";
+-
+-#------------------------------------------------------------
+-# Configure DNS cache access.
+-#------------------------------------------------------------
+-
+-# allow my networks to access the nameserver cache
+-my @localnetworks = ();
+-my %reversenets = ();
+-
+-foreach my $net ($nets->get_all_by_prop('type', 'network'))
+-{
+-    my $mask = $net->prop('Mask');
+-    my $key = $net->key;
+-    my $systemlocalnetwork = $net->prop('SystemLocalNetwork') || 'no';
+-    my $nameserver = $net->prop('NameServer') ||
+-	($systemlocalnetwork eq 'yes') ? '127.0.0.1' : 'none';
+-    push @localnetworks,
+-        esmith::util::computeAllLocalNetworkPrefixes ($key, $mask);
+-
+-    my $reverse = esmith::util::computeLocalNetworkReversed ($key, $mask);
+-    # Remove the trailing period provided by computeLocalNetworkReversed
+-    $reverse =~ s/\.$//;
+-    $reversenets{$reverse} = $nameserver unless ($nameserver eq 'none');
+-}
+-
+-allow_networks_2access_cache(@localnetworks);
+-
+-if ($dnscache->prop('Forwarder'))
+-{
+-    # We handle no domains locally
+-    delegate_domains_2DNS();
+-}
+-else
+-{
+-    delegate_domains_2DNS(
+-        %reversenets,
+-            map { $_->key => $_->prop('NameServer') || '127.0.0.1' } 
+-            ($domains->get_all_by_prop('type', 'domain'), 
+-            $domains->get_all_by_prop('type', 'domain-remote')
+-    )
+-);
+-}
+-
+-exit (0);
+-
+-sub allow_networks_2access_cache
+-{
+-    my %access = map { $_ => 1 } @_;
+-
+-    my $dir = '/var/service/dnscache/root/ip';
+-    chdir $dir
+-        || die "Cannot chdir to $dir: $!\n";
+-    unless (-f "127.0.0.1")
+-    {
+-        open F,">127.0.0.1"
+-            || die "Cannot add access file for loopback network: $!\n";
+-        close F;
+-    }
+-
+-    opendir(ACCESS, '.') or
+-    die "Cannot read dnscache access directory: $!";
+-
+-    foreach my $aclfile (readdir (ACCESS))
+-    {
+-        next if "$aclfile" eq "127.0.0.1";
+-        next if -d "$aclfile";
+-        if (exists $access{$aclfile})
+-        {
+-            # Cross this one off the list so that we don't bother creating it
+-            delete $access{$aclfile};
+-        }
+-        else
+-        {
+-            # We no longer need this entry
+-            unlink "$aclfile" or
+-            warn "Could not delete dnscache access file $dir/$aclfile: $!\n";
+-        }
+-    }
+-    closedir(ACCESS);
+-
+-    foreach my $aclfile (keys %access)
+-    {
+-        link "127.0.0.1", $aclfile or 
+-        die "Cannot add network access for $aclfile: $!\n";
+-    }
+-}
+-
+-sub delegate_domains_2DNS
+-{
+-    my %delegations = @_;
+-    my $serversdir = '/var/service/dnscache/root/servers';
+-    chdir $serversdir
+-        || die "Cannot chdir to $serversdir: $!\n";
+-    unless (-f "127.in-addr.arpa")
+-    {
+-        open F,">127.in-addr.arpa"
+-            || die "Cannot add delegation for loopback network: $!\n";
+-        print F "127.0.0.1\n";
+-        close F;
+-    }
+-
+-    opendir(SERVERS, '.') or
+-    die "Cannot read dnscache servers directory: $!";
+-
+-    foreach my $delegatefile (readdir (SERVERS))
+-    {
+-        next if "$delegatefile" eq '@';
+-
+-        next if "$delegatefile" eq "127.in-addr.arpa";
+-
+-        next if -d "$delegatefile";
+-
+-        unless (exists $delegations{$delegatefile})
+-        {
+-            # We no longer need this entry
+-            unlink "$delegatefile" or
+-            warn "Could not delete dnscache domain file $delegatefile: $!\n";
+-        }
+-    }
+-    closedir(SERVERS);
+-
+-    foreach my $delegatefile (keys %delegations)
+-    {
+-        if (-l $delegatefile)
+-        {
+-            # Legacy symlink - we use files now
+-            unlink "$delegatefile" or
+-            warn "Could not delete dnscache domain link $delegatefile: $!\n";
+-        }
+-        my $nameserver = $delegations{$delegatefile};
+-
+-        open DELEGATE, ">$delegatefile" or
+-            die "Couldn't create $delegatefile with value $nameserver\n";
+-        print DELEGATE "$nameserver\n";
+-        close DELEGATE;
+-    }
+-}

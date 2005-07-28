@@ -1,0 +1,27 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/etc/e-smith/db/configuration/migrate/20DNSForwarders:1.1 e-smith-dnscache/root/etc/e-smith/db/configuration/migrate/20DNSForwarders:1.2
+--- e-smith-dnscache/root/etc/e-smith/db/configuration/migrate/20DNSForwarders:1.1	Fri Jun 13 18:06:46 2003
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/migrate/20DNSForwarders	Thu May  5 14:22:25 2005
+@@ -4,10 +4,9 @@
+     my $forwarder = $DB->get_value_and_delete('DNSPrimaryIP') ||
+ 	$DB->get_prop_and_delete('named', 'Forwarder1');
+ 
+-    if (defined $forwarder)
+-    {
+-	$props{'Forwarder'} = $forwarder;
+-    }
++    return "" unless defined $forwarder;
++
++    $props{'Forwarder'} = $forwarder;
+ 
+     $forwarder = $DB->get_value_and_delete('DNSSecondaryIP') ||
+ 	$DB->get_prop_and_delete('named', 'Forwarder2');;
+@@ -17,7 +16,7 @@
+ 	warn "DNS forwarder $forwarder deleted - support provided for only one";
+     }
+ 
+-    my $dnscache = $DB->get('dnscache') || $DB->new_record('dnscache');
++    my $dnscache = $DB->get('dnscache') || $DB->new_record('dnscache', { type => 'service' } );
+ 
+     $dnscache->merge_props(%props);
+ }

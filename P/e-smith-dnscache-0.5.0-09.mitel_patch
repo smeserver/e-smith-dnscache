@@ -1,0 +1,70 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:1.1.1.1
+--- /dev/null	Wed Apr 13 16:16:09 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE	Tue Mar 12 20:18:55 2002
+@@ -0,0 +1,5 @@
++{
++    my $cachesize = db_get_prop($confref, 'dnscache', 'CacheSize')
++	|| "1000000";
++    "$cachesize";
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:1.1.1.1
+--- /dev/null	Wed Apr 13 16:16:09 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP	Tue Mar 12 20:18:55 2002
+@@ -0,0 +1,5 @@
++{
++    my $ip = db_get_prop($confref, 'dnscache', 'ListenIP')
++	|| "$LocalIP";
++    "$ip";
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:1.1.1.1
+--- /dev/null	Wed Apr 13 16:16:09 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND	Tue Mar 12 20:18:55 2002
+@@ -0,0 +1,5 @@
++{
++    my $sendip = db_get_prop($confref, 'dnscache', 'SendIP')
++	|| "0.0.0.0";
++    "$sendip";
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:1.1
+--- /dev/null	Wed Apr 13 16:16:09 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit	Tue Aug 24 21:10:18 2004
+@@ -0,0 +1,4 @@
++{
++    # vim: ft=perl:
++    $OUT = "DATALIMIT=" . ($dnscache{DataLimit} || "3000000");
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:1.1
+--- /dev/null	Wed Apr 13 16:16:09 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly	Tue Aug 24 21:10:18 2004
+@@ -0,0 +1,4 @@
++{
++    # vim: ft=perl:
++    $OUT = "FORWARDONLY=" . ($dnscache{Forwarder} ? 1 : 0);
++}
+Index: e-smith-dnscache/root/var/service/dnscache/run
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.7 e-smith-dnscache/root/var/service/dnscache/run:1.8
+--- e-smith-dnscache/root/var/service/dnscache/run:1.7	Tue Apr  5 14:05:57 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Mon Apr 11 18:20:05 2005
+@@ -80,7 +80,7 @@
+     my $key = $net->key;
+     my $systemlocalnetwork = $net->prop('SystemLocalNetwork') || 'no';
+     my $nameserver = $net->prop('NameServer') ||
+-	($systemlocalnetwork eq 'yes') ? $tinydns_ip : 'none';
++	(($systemlocalnetwork eq 'yes') ? $tinydns_ip : 'none');
+     push @localnetworks,
+         esmith::util::computeAllLocalNetworkPrefixes ($key, $mask);
+ 
+@@ -160,7 +160,7 @@
+ 
+     foreach my $aclfile (keys %access)
+     {
+-        link "127.0.0.1", "$dir/$aclfile" or 
++        link "$dir/127.0.0.1", "$dir/$aclfile" or 
+         die "Cannot add network access for $dir/$aclfile: $!\n";
+     }
+ }

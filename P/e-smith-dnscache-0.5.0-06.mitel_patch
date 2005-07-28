@@ -1,0 +1,31 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.5 e-smith-dnscache/root/var/service/dnscache/run:1.6
+--- e-smith-dnscache/root/var/service/dnscache/run:1.5	Wed Mar 30 14:33:40 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Wed Mar 30 17:39:44 2005
+@@ -31,6 +31,15 @@
+ sub allow_networks_2access_cache;
+ sub delegate_domains_2DNS;
+ 
++unless (-f "/var/service/dnscache/seed")
++{
++    system(qw(/bin/dd
++              if=/dev/urandom
++              of=/var/service/dnscache/seed
++              bs=128 count=1)) == 0
++                  or warn("Could not create seed file");
++}
++
+ open(STDIN, "<./seed") or warn "Failed to redirect input from seed file: $!";
+ open(STDERR, ">&STDOUT") or warn "Failed to redirect stderr to stdout: $!";;
+ 
+@@ -99,8 +108,9 @@
+     $ENV{FORWARDONLY} = '1';
+ }
+ $ENV{IP} = $dnscache->prop('ListenIP') || $localip->value;
+-$ENV{SENDIP} = $dnscache->prop('SendIP') || '0.0.0.0';
++$ENV{IPSEND} = $dnscache->prop('SendIP') || '0.0.0.0';
+ $ENV{CACHESIZE} = $dnscache->prop('CacheSize') || 1000000;
++$ENV{ROOT} = '/service/dnscache/root';
+ 
+ exec("envuidgid", "dnscache", "softlimit", "-o250", "-d", "$datalimit",
+     "/usr/local/bin/dnscache")

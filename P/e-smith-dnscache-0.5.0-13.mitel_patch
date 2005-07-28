@@ -1,0 +1,17 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE:1.2
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE:1.1	Wed Apr 20 14:32:37 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE	Wed Apr 20 17:58:58 2005
+@@ -1,4 +1,4 @@
+ {
+-    my $c = $dnscache->prop('CacheSize') || 1000000;
++    my $c = $dnscache{'CacheSize'} || 1000000;
+     "export CACHESIZE=$c"
+ }
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP:1.2
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP:1.1	Wed Apr 20 14:32:37 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP	Wed Apr 20 17:58:58 2005
+@@ -1 +1 @@
+-IP=127.0.0.2
++export IP=127.0.0.2

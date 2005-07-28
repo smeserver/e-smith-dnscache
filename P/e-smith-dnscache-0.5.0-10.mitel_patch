@@ -1,0 +1,181 @@
+Index: e-smith-dnscache/createlinks
+diff -u e-smith-dnscache/createlinks:1.12 e-smith-dnscache/createlinks:1.13
+--- e-smith-dnscache/createlinks:1.12	Wed Mar 30 18:16:33 2005
++++ e-smith-dnscache/createlinks	Wed Apr 20 14:32:36 2005
+@@ -4,6 +4,8 @@
+ 
+ templates2events('/var/service/dnscache/root/servers/@',
+     qw(bootstrap-console-save console-save));
++templates2events('/var/service/dnscache.forwarder/config',
++    qw(bootstrap-console-save console-save));
+ 
+ foreach my $event (qw(
+ 	console-save
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/CACHESIZE	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $cachesize = db_get_prop($confref, 'dnscache', 'CacheSize')
+-	|| "1000000";
+-    "$cachesize";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IP	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $ip = db_get_prop($confref, 'dnscache', 'ListenIP')
+-	|| "$LocalIP";
+-    "$ip";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:1.1.1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND:1.1.1.1	Tue Mar 12 20:18:55 2002
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/env/IPSEND	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-{
+-    my $sendip = db_get_prop($confref, 'dnscache', 'SendIP')
+-	|| "0.0.0.0";
+-    "$sendip";
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/root/servers/@
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/root/servers/@:1.2 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/root/servers/@:1.3
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/root/servers/@:1.2	Fri Jun 13 18:06:46 2003
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/root/servers/@	Wed Apr 20 14:32:37 2005
+@@ -1,21 +1,3 @@
+ {
+-    my @servers = qw (
+-			198.41.0.4
+-			128.9.0.107
+-			192.33.4.12
+-			128.8.10.90
+-			192.203.230.10
+-			192.5.5.241
+-			192.112.36.4
+-			128.63.2.53
+-			192.36.148.17
+-			192.58.128.30
+-			193.0.14.129
+-			198.32.64.12
+-			202.12.27.33
+-		    );
+-
+-    my $forwarder = $dnscache{Forwarder};
+-
+-    $OUT = $forwarder ? "$forwarder" : join("\n", @servers);
++    "127.0.0.2";
+ }
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit:1.1	Tue Aug 24 21:10:18 2004
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/10datalimit	Wed Dec 31 19:00:00 1969
+@@ -1,4 +0,0 @@
+-{
+-    # vim: ft=perl:
+-    $OUT = "DATALIMIT=" . ($dnscache{DataLimit} || "3000000");
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:1.1 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:removed
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly:1.1	Tue Aug 24 21:10:18 2004
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache/runenv/20forwardonly	Wed Dec 31 19:00:00 1969
+@@ -1,4 +0,0 @@
+-{
+-    # vim: ft=perl:
+-    $OUT = "FORWARDONLY=" . ($dnscache{Forwarder} ? 1 : 0);
+-}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/CACHESIZE	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1,4 @@
++{
++    my $c = $dnscache->prop('CacheSize') || 1000000;
++    "export CACHESIZE=$c"
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/DATALIMIT
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/DATALIMIT:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/DATALIMIT	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1,5 @@
++{
++    my $datalimit = $dnscache{'DataLimit'} || 3000000;
++    "DATALIMIT=$datalimit";
++}
++
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1,4 @@
++{
++    (defined $dnscache{'Forwarder'}) ?
++	"export FORWARDONLY=1" : "";
++}
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IP	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1 @@
++IP=127.0.0.2
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IPSEND
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IPSEND:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/IPSEND	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1 @@
++export IPSEND=0.0.0.0
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/ROOT
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/ROOT:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/ROOT	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1 @@
++export ROOT=/var/service/dnscache.forwarder/root
+Index: e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@:1.1
+--- /dev/null	Wed Apr 20 14:33:03 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@	Wed Apr 20 14:32:37 2005
+@@ -0,0 +1,21 @@
++{
++    my @servers = qw (
++			198.41.0.4
++			128.9.0.107
++			192.33.4.12
++			128.8.10.90
++			192.203.230.10
++			192.5.5.241
++			192.112.36.4
++			128.63.2.53
++			192.36.148.17
++			192.58.128.30
++			193.0.14.129
++			198.32.64.12
++			202.12.27.33
++		    );
++
++    my $forwarder = $dnscache{Forwarder};
++
++    $OUT = $forwarder ? "$forwarder" : join("\n", @servers);
++}
+Index: e-smith-dnscache/root/var/service/dnscache/run
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.8 e-smith-dnscache/root/var/service/dnscache/run:1.9
+--- e-smith-dnscache/root/var/service/dnscache/run:1.8	Mon Apr 11 18:20:05 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Wed Apr 20 14:32:37 2005
+@@ -109,14 +109,10 @@
+ }
+ 
+ my $datalimit = $dnscache->prop('DataLimit') || 3000000;
+-my $forwarder = $dnscache->prop('Forwarder');
+-if ($forwarder)
+-{
+-    $ENV{FORWARDONLY} = '1';
+-}
++$ENV{FORWARDONLY} = '1';
+ $ENV{IP} = $dnscache->prop('ListenIP') || $localip->value;
+ $ENV{IPSEND} = $dnscache->prop('SendIP') || '0.0.0.0';
+-$ENV{CACHESIZE} = $dnscache->prop('CacheSize') || 1000000;
++$ENV{CACHESIZE} = 200000;
+ $ENV{ROOT} = '/service/dnscache/root';
+ 
+ exec("envuidgid", "dnscache", "softlimit", "-o250", "-d", "$datalimit",

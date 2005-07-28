@@ -1,0 +1,134 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.6 e-smith-dnscache/root/var/service/dnscache/run:1.7
+--- e-smith-dnscache/root/var/service/dnscache/run:1.6	Wed Mar 30 17:39:44 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Tue Apr  5 14:05:57 2005
+@@ -56,6 +56,13 @@
+     die "localip not configured in configuration db\n";
+ }
+ 
++my $tinydns = $config->get('tinydns');
++unless ($tinydns)
++{
++    die "tinydns not configured in configuration db\n";
++}
++my $tinydns_ip = $tinydns->prop('ListenIP') || "127.0.0.1";
++
+ my $domains = esmith::DomainsDB->open or die "Could not open Domains db.";
+ my $nets = esmith::NetworksDB->open or die "Could not open Networks db.";
+ 
+@@ -73,7 +80,7 @@
+     my $key = $net->key;
+     my $systemlocalnetwork = $net->prop('SystemLocalNetwork') || 'no';
+     my $nameserver = $net->prop('NameServer') ||
+-	($systemlocalnetwork eq 'yes') ? '127.0.0.1' : 'none';
++	($systemlocalnetwork eq 'yes') ? $tinydns_ip : 'none';
+     push @localnetworks,
+         esmith::util::computeAllLocalNetworkPrefixes ($key, $mask);
+ 
+@@ -94,7 +101,7 @@
+ {
+     delegate_domains_2DNS(
+         %reversenets,
+-            map { $_->key => $_->prop('NameServer') || '127.0.0.1' } 
++            map { $_->key => $_->prop('NameServer') || $tinydns_ip } 
+             ($domains->get_all_by_prop('type', 'domain'), 
+             $domains->get_all_by_prop('type', 'domain-remote')
+     )
+@@ -123,16 +130,14 @@
+     my %access = map { $_ => 1 } @_;
+ 
+     my $dir = '/var/service/dnscache/root/ip';
+-    chdir $dir
+-        || die "Cannot chdir to $dir: $!\n";
+-    unless (-f "127.0.0.1")
++    unless (-f "$dir/127.0.0.1")
+     {
+-        open F,">127.0.0.1"
++        open F,">$dir/127.0.0.1"
+             || die "Cannot add access file for loopback network: $!\n";
+         close F;
+     }
+ 
+-    opendir(ACCESS, '.') or
++    opendir(ACCESS, $dir) or
+     die "Cannot read dnscache access directory: $!";
+ 
+     foreach my $aclfile (readdir (ACCESS))
+@@ -147,7 +152,7 @@
+         else
+         {
+             # We no longer need this entry
+-            unlink "$aclfile" or
++            unlink "$dir/$aclfile" or
+             warn "Could not delete dnscache access file $dir/$aclfile: $!\n";
+         }
+     }
+@@ -155,8 +160,8 @@
+ 
+     foreach my $aclfile (keys %access)
+     {
+-        link "127.0.0.1", $aclfile or 
+-        die "Cannot add network access for $aclfile: $!\n";
++        link "127.0.0.1", "$dir/$aclfile" or 
++        die "Cannot add network access for $dir/$aclfile: $!\n";
+     }
+ }
+ 
+@@ -164,48 +169,37 @@
+ {
+     my %delegations = @_;
+     my $serversdir = '/var/service/dnscache/root/servers';
+-    chdir $serversdir
+-        || die "Cannot chdir to $serversdir: $!\n";
+-    unless (-f "127.in-addr.arpa")
+-    {
+-        open F,">127.in-addr.arpa"
+-            || die "Cannot add delegation for loopback network: $!\n";
+-        print F "127.0.0.1\n";
+-        close F;
+-    }
+ 
+-    opendir(SERVERS, '.') or
++    opendir(SERVERS, $serversdir) or
+     die "Cannot read dnscache servers directory: $!";
+ 
+     foreach my $delegatefile (readdir (SERVERS))
+     {
+         next if "$delegatefile" eq '@';
+ 
+-        next if "$delegatefile" eq "127.in-addr.arpa";
+-
+-        next if -d "$delegatefile";
++        next if -d "$serversdir/$delegatefile";
+ 
+         unless (exists $delegations{$delegatefile})
+         {
+             # We no longer need this entry
+-            unlink "$delegatefile" or
+-            warn "Could not delete dnscache domain file $delegatefile: $!\n";
++            unlink "$serversdir/$delegatefile" or
++            warn "Could not delete dnscache domain file $serversdir/$delegatefile: $!\n";
+         }
+     }
+     closedir(SERVERS);
+ 
+     foreach my $delegatefile (keys %delegations)
+     {
+-        if (-l $delegatefile)
++        if (-l "$serversdir/$delegatefile")
+         {
+             # Legacy symlink - we use files now
+-            unlink "$delegatefile" or
+-            warn "Could not delete dnscache domain link $delegatefile: $!\n";
++            unlink "$serversdir/$delegatefile" or
++            warn "Could not delete dnscache domain link $serversdir/$delegatefile: $!\n";
+         }
+         my $nameserver = $delegations{$delegatefile};
+ 
+-        open DELEGATE, ">$delegatefile" or
+-            die "Couldn't create $delegatefile with value $nameserver\n";
++        open DELEGATE, ">$serversdir/$delegatefile" or
++            die "Couldn't create $serversdir/$delegatefile with value $nameserver\n";
+         print DELEGATE "$nameserver\n";
+         close DELEGATE;
+     }
