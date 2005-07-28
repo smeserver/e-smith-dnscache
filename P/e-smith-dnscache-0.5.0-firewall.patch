@@ -1,0 +1,15 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/access mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/access
+--- e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/access	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/access	2005-07-28 12:46:26.358860936 -0600
+@@ -0,0 +1 @@
++private
+diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort
+--- e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort	2005-07-28 12:46:20.988677328 -0600
+@@ -0,0 +1 @@
++53
+diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort
+--- e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-dnscache-0.5.0/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort	2005-07-28 12:46:23.417308120 -0600
+@@ -0,0 +1 @@
++53
