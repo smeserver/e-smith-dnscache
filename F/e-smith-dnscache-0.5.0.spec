@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 0.5.0
-%define release 22sme01
+%define release 23
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -25,8 +25,7 @@ Patch13: e-smith-dnscache-0.5.0-19.mitel_patch
 Patch14: e-smith-dnscache-0.5.0-20.mitel_patch
 Patch15: e-smith-dnscache-0.5.0-21.mitel_patch
 Patch16: e-smith-dnscache-0.5.0-22.mitel_patch
-Patch17: e-smith-dnscache-0.5.0-firewall.patch
-Patch18: e-smith-dnscache-0.5.0-copying.patch
+Patch17: e-smith-dnscache-0.5.0-23.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -40,8 +39,8 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
-* Thu Jul 28 2005 Shad L. Lords <slords@mail.com>
-- [0.5.0-22sme01]
+* Tue Aug  2 2005 Shad Lords <slords@email.com>
+- [0.5.0-23]
 - Add TCPPort/UDPPort/access properties to dnscache [SF: 1246986]
 - Add COPYING file to distribution
 
@@ -380,7 +379,6 @@ done
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
-%patch18 -p1
 
 %build
 perl createlinks

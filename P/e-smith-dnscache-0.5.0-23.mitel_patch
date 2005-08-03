@@ -1,6 +1,7 @@
-diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.0/COPYING mezzanine_patched_e-smith-dnscache-0.5.0/COPYING
---- e-smith-dnscache-0.5.0/COPYING	1969-12-31 17:00:00.000000000 -0700
-+++ mezzanine_patched_e-smith-dnscache-0.5.0/COPYING	2005-07-28 12:48:36.762768968 -0600
+Index: e-smith-dnscache/COPYING
+diff -u /dev/null e-smith-dnscache/COPYING:1.1
+--- /dev/null	Tue Aug  2 16:42:07 2005
++++ e-smith-dnscache/COPYING	Tue Aug  2 16:41:07 2005
 @@ -0,0 +1,340 @@
 +		    GNU GENERAL PUBLIC LICENSE
 +		       Version 2, June 1991
@@ -342,3 +343,21 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.0/COPYING mezzanine_patche
 +consider it more useful to permit linking proprietary applications with the
 +library.  If this is what you want to do, use the GNU Library General
 +Public License instead of this License.
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort:1.1
+--- /dev/null	Tue Aug  2 16:42:07 2005
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/TCPPort	Tue Aug  2 16:41:07 2005
+@@ -0,0 +1 @@
++53
+Index: e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort:1.1
+--- /dev/null	Tue Aug  2 16:42:07 2005
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/UDPPort	Tue Aug  2 16:41:07 2005
+@@ -0,0 +1 @@
++53
+Index: e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/access
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/access:1.1
+--- /dev/null	Tue Aug  2 16:42:07 2005
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache/access	Tue Aug  2 16:41:07 2005
+@@ -0,0 +1 @@
++private
