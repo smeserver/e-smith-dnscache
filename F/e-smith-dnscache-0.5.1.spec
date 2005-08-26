@@ -1,31 +1,14 @@
 Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
-%define version 0.5.0
-%define release 23
+%define version 0.5.1
+%define release 02
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-dnscache-0.5.0-02.mitel_patch
-Patch1: e-smith-dnscache-0.5.0-03.mitel_patch
-Patch2: e-smith-dnscache-0.5.0-04.mitel_patch
-Patch3: e-smith-dnscache-0.5.0-05.mitel_patch
-Patch4: e-smith-dnscache-0.5.0-06.mitel_patch
-Patch5: e-smith-dnscache-0.5.0-07.mitel_patch
-Patch6: e-smith-dnscache-0.5.0-08.mitel_patch
-Patch7: e-smith-dnscache-0.5.0-09.mitel_patch
-Patch8: e-smith-dnscache-0.5.0-10.mitel_patch
-Patch9: e-smith-dnscache-0.5.0-11.mitel_patch
-Patch10: e-smith-dnscache-0.5.0-13.mitel_patch
-Patch11: e-smith-dnscache-0.5.0-17.mitel_patch
-Patch12: e-smith-dnscache-0.5.0-18.mitel_patch
-Patch13: e-smith-dnscache-0.5.0-19.mitel_patch
-Patch14: e-smith-dnscache-0.5.0-20.mitel_patch
-Patch15: e-smith-dnscache-0.5.0-21.mitel_patch
-Patch16: e-smith-dnscache-0.5.0-22.mitel_patch
-Patch17: e-smith-dnscache-0.5.0-23.mitel_patch
+Patch0: e-smith-dnscache-0.5.1-02.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -39,6 +22,25 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Thu Aug 25 2005 Gordon Rowell <gordonr@gormand.com.au>
+- [0.5.1-02]
+- Configure DNS servers for domains, depending on Nameservers
+  property:
+  - localhost: 127.0.0.1
+  - corporate: dnscache{Forwarder}, dnscache{Forwarder2}
+  - internet:  <nothing>
+  - Comma separated list of IPs : To those listed servers
+- Add dns-update event and reconfigure dnscache there
+- Call initialise-default-databases in dns-update to cater for
+  domain db migration which might be required due to modification
+  of the Corporate DNS Servers
+- Migrate db and reconfigure dnscache in domain-modify as well, 
+  since we might have changed nameservers.
+
+* Thu Aug 25 2005 Charlie Brady <charlieb@e-smith.com>
+- [0.5.1-01]
+- Roll new development stream prior to reworking Nameservers settings - 0.5.1
+
 * Tue Aug  2 2005 Shad Lords <slords@email.com>
 - [0.5.0-23]
 - Add TCPPort/UDPPort/access properties to dnscache [SF: 1246986]
@@ -362,23 +364,6 @@ do
     mkdir -p root/var/service/dnscache/root/$i
 done
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
 
 %build
 perl createlinks

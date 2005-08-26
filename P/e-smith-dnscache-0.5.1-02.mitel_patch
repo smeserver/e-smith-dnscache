@@ -1,0 +1,100 @@
+Index: e-smith-dnscache/createlinks
+diff -u e-smith-dnscache/createlinks:1.14 e-smith-dnscache/createlinks:1.15
+--- e-smith-dnscache/createlinks:1.14	Mon May  9 16:54:22 2005
++++ e-smith-dnscache/createlinks	Thu Aug 25 14:00:49 2005
+@@ -13,10 +13,15 @@
+ 	network-delete
+ 	domain-create
+ 	domain-delete
++	domain-modify
++	dns-update
+ 	))
+ {
+     safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/dnscache");
+ }
++
++event_link("initialize-default-databases", "dns-update", "00");
++event_link("initialize-default-databases", "domain-modify", "00");
+ 
+ safe_symlink("daemontools", "root/etc/rc.d/init.d/dnscache");
+ service_link_enhanced("dnscache", "S55", "7");
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/var/service/dnscache/run:1.10 e-smith-dnscache/root/var/service/dnscache/run:1.11
+--- e-smith-dnscache/root/var/service/dnscache/run:1.10	Wed Jul  6 14:48:57 2005
++++ e-smith-dnscache/root/var/service/dnscache/run	Thu Aug 25 14:00:49 2005
+@@ -45,6 +45,12 @@
+ 
+ my $config = esmith::ConfigDB->open or die "Could not open config db.";
+ my $dnscache = $config->get('dnscache');
++my $forwarders = $dnscache->prop("Forwarder") || "";
++if ($dnscache->prop("Forwarder2"))
++{
++    $forwarders .= "," . $dnscache->prop("Forwarder2");
++}
++
+ unless ($dnscache)
+ {
+     die "dnscache not configured in configuration db\n";
+@@ -92,24 +98,12 @@
+ 
+ allow_networks_2access_cache(@localnetworks);
+ 
+-if ($dnscache->prop('Forwarder'))
+-{
+-    # We handle no domains locally
+-    delegate_domains_2DNS();
+-}
+-else
+-{
+-    delegate_domains_2DNS(
++delegate_domains_2DNS(
+         %reversenets,
+-            map { ($_->prop('SystemPrimaryDomain') eq 'yes') ?
+-		    ($_->key => $tinydns_ip) :
+-			defined $_->prop('NameServer') ?
+-			    ($_->key => $_->prop('NameServer')) : () }
++            map { $_->key => $_->prop('Nameservers') }
+ 		($domains->get_all_by_prop('type', 'domain'), 
+ 		$domains->get_all_by_prop('type', 'domain-remote')
+-    )
+-);
+-}
++));
+ 
+ my $datalimit = $dnscache->prop('DataLimit') || 3000000;
+ $ENV{FORWARDONLY} = '1';
+@@ -195,11 +189,31 @@
+             unlink "$serversdir/$delegatefile" or
+             warn "Could not delete dnscache domain link $serversdir/$delegatefile: $!\n";
+         }
+-        my $nameserver = $delegations{$delegatefile};
+ 
+         open DELEGATE, ">$serversdir/$delegatefile" or
+-            die "Couldn't create $serversdir/$delegatefile with value $nameserver\n";
+-        print DELEGATE "$nameserver\n";
++            die "Couldn't create $serversdir/$delegatefile\n";
++
++        for my $ns ( split /,/, $delegations{$delegatefile} )
++        {
++            if ($ns =~ /^localhost$/)
++            {
++                print DELEGATE $tinydns_ip . "\n";
++            }
++            elsif ($ns =~ /^corporate$/)
++            {
++		print DELEGATE join("\n", split /,/, $forwarders) . "\n";
++            }
++            elsif ($ns =~ /^internet$/)
++            {
++                unlink "$serversdir/$delegatefile" or
++                    warn "Couldn't unlink $serversdir/$delegatefile\n"
++            }
++            else
++            {
++                print DELEGATE $ns . "\n";
++            }
++        }
++
+         close DELEGATE;
+     }
+ }
