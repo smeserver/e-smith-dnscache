@@ -2,13 +2,14 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 0.5.1
-%define release 02
+%define release 02sme01
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-dnscache-0.5.1-02.mitel_patch
+Patch1: e-smith-dnscache-0.5.1-templatesinrun.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -22,6 +23,11 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Wed Sep 14 2005 Gordon Rowell <gordonr@gormand.com.au>
+- [0.5.1-02sme01]
+- Expand templates in dnscache{,.forwarder}/run
+- Restart dnscache.forwarder in dns-update event [SF: 1290325]
+
 * Thu Aug 25 2005 Gordon Rowell <gordonr@gormand.com.au>
 - [0.5.1-02]
 - Configure DNS servers for domains, depending on Nameservers
@@ -364,6 +370,7 @@ do
     mkdir -p root/var/service/dnscache/root/$i
 done
 %patch0 -p1
+%patch1 -p1
 
 %build
 perl createlinks
