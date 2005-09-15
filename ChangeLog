@@ -24,3 +24,8 @@ Wed Sep 14 19:42:27 2005                       Gordon Rowell (gordonr)
 Pull template expansions into run scripts
 
 ----------------------------------------------------------------------
+Wed Sep 14 19:50:33 2005                       Gordon Rowell (gordonr)
+
+Leave forwarder cache alone most of the time
+
+----------------------------------------------------------------------

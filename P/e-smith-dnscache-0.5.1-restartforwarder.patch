@@ -1,0 +1,17 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-0.5.1/createlinks mezzanine_patched_e-smith-dnscache-0.5.1/createlinks
+--- e-smith-dnscache-0.5.1/createlinks	2005-09-14 19:46:12.594921400 -0600
++++ mezzanine_patched_e-smith-dnscache-0.5.1/createlinks	2005-09-14 19:45:48.675557696 -0600
+@@ -13,6 +13,13 @@
+ 	))
+ {
+     safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/dnscache");
++}
++
++foreach my $event (qw(
++	console-save
++	dns-update
++	)
++{
+     safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/dnscache.forwarder");
+ }
+ 
