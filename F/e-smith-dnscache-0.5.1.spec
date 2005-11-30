@@ -2,15 +2,16 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 0.5.1
-%define release 02sme02
+%define release 06
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-dnscache-0.5.1-02.mitel_patch
-Patch1: e-smith-dnscache-0.5.1-templatesinrun.patch
-Patch2: e-smith-dnscache-0.5.1-restartforwarder.patch3
+Patch1: e-smith-dnscache-0.5.1-03.mitel_patch
+Patch2: e-smith-dnscache-0.5.1-04.mitel_patch
+Patch3: e-smith-dnscache-0.5.1-05.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -24,14 +25,25 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
-* Wed Sep 14 2005 Gordon Rowell <gordonr@gormand.com.au>
-- [0.5.1-02sme02]
-- Only disturb the forwarder cache in dns-update and console-save [SF: 1290325]
+* Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 0.5.1-06
+- Bump release number only
 
-* Wed Sep 14 2005 Gordon Rowell <gordonr@gormand.com.au>
-- [0.5.1-02sme01]
-- Expand templates in dnscache{,.forwarder}/run
-- Restart dnscache.forwarder in dns-update event [SF: 1290325]
+* Thu Oct 27 2005 Charlie Brady <charlieb@e-smith.com>
+- [0.5.1-05]
+- Add default name server delegation for domains without a Nameservers property.
+  [SF: 1339875]
+
+* Mon Sep 19 2005 Charlie Brady <charlieb@e-smith.com>
+- [0.5.1-04]
+- Add missing dnscache.forwarder config db record. [SF: 1290325]
+
+* Thu Sep 15 2005 Charlie Brady <charlieb@e-smith.com>
+- [0.5.1-03]
+- Expand templates and restart dnscache.forwarder in dns-update and console-save
+  events. Expand templates in bootstrap-console-save rather than
+  post-{install,upgrade} events. [SF: 1290325]
+- Add support for Forwarder2 property in template for root/servers/@ of
+  dnscache.forwarder service.
 
 * Thu Aug 25 2005 Gordon Rowell <gordonr@gormand.com.au>
 - [0.5.1-02]
@@ -377,6 +389,7 @@ done
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 perl createlinks

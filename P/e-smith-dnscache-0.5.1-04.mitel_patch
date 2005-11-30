@@ -1,0 +1,12 @@
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache.forwarder/status:1.1
+--- /dev/null	Mon Sep 19 21:40:09 2005
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache.forwarder/status	Mon Sep 19 21:39:38 2005
+@@ -0,0 +1 @@
++enabled
+Index: e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache.forwarder/type
+diff -u /dev/null e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache.forwarder/type:1.1
+--- /dev/null	Mon Sep 19 21:40:09 2005
++++ e-smith-dnscache/root/etc/e-smith/db/configuration/defaults/dnscache.forwarder/type	Mon Sep 19 21:39:38 2005
+@@ -0,0 +1 @@
++service

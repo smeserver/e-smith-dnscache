@@ -1,0 +1,49 @@
+Index: e-smith-dnscache/createlinks
+diff -u e-smith-dnscache/createlinks:1.15 e-smith-dnscache/createlinks:1.16
+--- e-smith-dnscache/createlinks:1.15	Thu Aug 25 14:00:49 2005
++++ e-smith-dnscache/createlinks	Thu Sep 15 11:53:07 2005
+@@ -2,10 +2,13 @@
+ 
+ use esmith::Build::CreateLinks  qw(:all);
+ 
++foreach (qw(root/servers/@ config))
++{
++    templates2events("/var/service/dnscache.forwarder/$_",
++	qw(bootstrap-console-save console-save dns-update));
++}
+ templates2events('/var/service/dnscache/root/servers/@',
+-    qw(bootstrap-console-save console-save));
+-templates2events('/var/service/dnscache.forwarder/config',
+-    qw(post-install post-upgrade));
++	qw(bootstrap-console-save console-save dns-update));
+ 
+ foreach my $event (qw(
+ 	console-save
+@@ -18,6 +21,14 @@
+ 	))
+ {
+     safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/dnscache");
++}
++
++foreach my $event (qw(
++	console-save
++	dns-update
++	))
++{
++    safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/dnscache.forwarder");
+ }
+ 
+ event_link("initialize-default-databases", "dns-update", "00");
+Index: e-smith-dnscache/e-smith-dnscache.spec
+diff -u e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@:1.2 e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@:1.3
+--- e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@:1.2	Mon Jun  6 14:48:01 2005
++++ e-smith-dnscache/root/etc/e-smith/templates/var/service/dnscache.forwarder/root/servers/@	Thu Sep 15 11:53:07 2005
+@@ -18,4 +18,8 @@
+     my $forwarder = $dnscache{Forwarder};
+ 
+     $OUT = $forwarder ? "$forwarder" : join("\n", @servers);
++    if ($forwarder = $dnscache{Forwarder2})
++    {
++	$OUT .= "\n$forwarder";
++    }
+ }
