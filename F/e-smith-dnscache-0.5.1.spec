@@ -1,17 +1,13 @@
 Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
-%define version 0.5.1
-%define release 06
+%define version 0.6.0
+%define release 01
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-dnscache-0.5.1-02.mitel_patch
-Patch1: e-smith-dnscache-0.5.1-03.mitel_patch
-Patch2: e-smith-dnscache-0.5.1-04.mitel_patch
-Patch3: e-smith-dnscache-0.5.1-05.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -25,6 +21,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Tue Mar 14 2006 Charlie Brady <charlie_brady@mitel.com> 4.16.0-01
+- Roll stable stream version. [SME: 1016]
+
 * Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 0.5.1-06
 - Bump release number only
 
@@ -378,18 +377,6 @@ caching nameserver
 
 %prep
 %setup
-for i in bootstrap-console-save network-create network-delete
-do
-    mkdir -p root/etc/e-smith/events/$i
-done
-for i in ip servers
-do
-    mkdir -p root/var/service/dnscache/root/$i
-done
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 perl createlinks
