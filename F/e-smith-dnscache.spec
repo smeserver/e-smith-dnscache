@@ -1,7 +1,7 @@
 Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
-%define version 0.6.0
+%define version 1.0.0
 %define release 01
 Version: %{version}
 Release: %{release}
@@ -21,7 +21,10 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
-* Tue Mar 14 2006 Charlie Brady <charlie_brady@mitel.com> 4.16.0-01
+* Thu Mar 16 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-01
+- Roll (proper) stable stream version. [SME: 1016]
+
+* Tue Mar 14 2006 Charlie Brady <charlie_brady@mitel.com> 0.6.0-01
 - Roll stable stream version. [SME: 1016]
 
 * Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 0.5.1-06
