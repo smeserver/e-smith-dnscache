@@ -2,12 +2,13 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 01
+%define release 02
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
+Patch0: e-smith-dnscache-1.0.0.validateNameServer.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -21,6 +22,10 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Sun Apr 30 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-02
+- Don't use NameServer property from networks database if it would
+  cause feedback loop. [SME: 1343]
+
 * Thu Mar 16 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-01
 - Roll (proper) stable stream version. [SME: 1016]
 
@@ -380,6 +385,7 @@ caching nameserver
 
 %prep
 %setup
+%patch0 -p1
 
 %build
 perl createlinks
