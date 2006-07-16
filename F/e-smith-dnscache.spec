@@ -23,7 +23,7 @@ caching nameserver
 
 %changelog
 * Sun Jul 16 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-03
-- Make dnscache user creation consistent with e-smith-tinydns. [SME: 1688]
+- Make dnslog user creation consistent with e-smith-tinydns. [SME: 1688]
 
 * Sun Apr 30 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-02
 - Don't use NameServer property from networks database if it would
