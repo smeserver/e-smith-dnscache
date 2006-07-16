@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 02
+%define release 03
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -22,6 +22,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Sun Jul 16 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-03
+- Make dnscache user creation consistent with e-smith-tinydns. [SME: 1688]
+
 * Sun Apr 30 2006 Charlie Brady <charlie_brady@mitel.com> 1.0.0-02
 - Don't use NameServer property from networks database if it would
   cause feedback loop. [SME: 1343]
@@ -405,7 +408,7 @@ touch root/var/service/dnscache.forwarder/root/ip/127
 /sbin/e-smith/create-system-user dnscache 410 \
     "DNScache user" /var/service/dnscache /bin/false
 /sbin/e-smith/create-system-user dnslog 411 \
-    "DNScache log user" /var/service/dnscache/log /bin/false
+    "DNS log user" /var/log /bin/false
 
 %post
 # Remove any left over env/FORWARDONLY file
