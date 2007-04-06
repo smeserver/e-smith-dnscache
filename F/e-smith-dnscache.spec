@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 4
+%define release 5
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -10,6 +10,7 @@ License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-dnscache-1.0.0.validateNameServer.patch
+Patch1: e-smith-dnscache-1.0.0-dnscacne_servers.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -22,6 +23,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Fri Apr 06 2007 Shad L. Lords <slords@mail.com> 1.0.0-5
+- Fix dnscache root server files [SME: 2721]
+
 * Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
 - Update to new release naming.  No functional changes.
 - Make Packager generic
@@ -393,6 +397,7 @@ caching nameserver
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 
 %build
 perl createlinks
