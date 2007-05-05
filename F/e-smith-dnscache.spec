@@ -4,8 +4,7 @@ Name: %{name}
 %define version 1.0.0
 %define release 5
 Version: %{version}
-Release: %smerelease %{release}
-Packager: %{_packager}
+Release: %{release}%{?dist}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -23,6 +22,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
+- Clean up spec so package can be built by koji/plague
+
 * Fri Apr 06 2007 Shad L. Lords <slords@mail.com> 1.0.0-5
 - Fix dnscache root server files [SME: 2721]
 
