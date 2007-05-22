@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 5
+%define release 6
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -10,6 +10,7 @@ Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-dnscache-1.0.0.validateNameServer.patch
 Patch1: e-smith-dnscache-1.0.0-dnscacne_servers.patch
+Patch2: e-smith-dnscache-1.0.0-dnscacne_forwarder.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -22,6 +23,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Mon May 21 2007 Shad L. Lords <slords@mail.com> 1.0.0-6
+- Ensure Forwarder has value and not just defined [SME: 3013]
+
 * Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
 - Clean up spec so package can be built by koji/plague
 
@@ -400,6 +404,7 @@ caching nameserver
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 perl createlinks
