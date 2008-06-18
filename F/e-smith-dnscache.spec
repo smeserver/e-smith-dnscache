@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 10
+%define release 11
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -15,6 +15,7 @@ Patch3: e-smith-dnscache-1.0.0-sigpipe.patch
 Patch4: e-smith-dnscache-1.0.0-cachesize.patch
 Patch5: e-smith-dnscache-1.0.0-reverse_delegation.patch
 Patch6: e-smith-dnscache-1.0.0.validateNameServer.patch2
+Patch7: e-smith-dnscache-1.0.0-L.root.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -27,6 +28,10 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Wed Jun 18 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-11
+- Use new address for L root server, and delete included version of
+  root/servers/@ file, since we template it. [SME: 4414]
+
 * Wed Jun 18 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-10
 - Fix validation of NameServer properties pulled from networks db.
   [SME: 1343]
@@ -428,6 +433,7 @@ caching nameserver
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 perl createlinks
