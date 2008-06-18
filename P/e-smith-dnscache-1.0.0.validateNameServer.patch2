@@ -24,5 +24,7 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-1.0.0/root/var/service/dnscach
 -$ENV{CACHESIZE} = 200000;
 -$ENV{ROOT} = '/service/dnscache/root';
  
+ # http://marc.theaimsgroup.com/?l=djbdns&m=104812086607532&w=2
+ $SIG{'PIPE'} = 'IGNORE';
  exec("envuidgid", "dnscache", "softlimit", "-o250", "-d", "$datalimit",
      "/usr/local/bin/dnscache")
