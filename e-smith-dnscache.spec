@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 8
+%define release 11
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -13,6 +13,9 @@ Patch1: e-smith-dnscache-1.0.0-dnscacne_servers.patch
 Patch2: e-smith-dnscache-1.0.0-dnscacne_forwarder.patch
 Patch3: e-smith-dnscache-1.0.0-sigpipe.patch
 Patch4: e-smith-dnscache-1.0.0-cachesize.patch
+Patch5: e-smith-dnscache-1.0.0-reverse_delegation.patch
+Patch6: e-smith-dnscache-1.0.0.validateNameServer.patch2
+Patch7: e-smith-dnscache-1.0.0-L.root.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -25,6 +28,18 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Wed Jun 18 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-11
+- Use new address for L root server, and delete included version of
+  root/servers/@ file, since we template it. [SME: 4414]
+
+* Wed Jun 18 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-10
+- Fix validation of NameServer properties pulled from networks db.
+  [SME: 1343]
+
+* Wed Jun 18 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-9
+- Fix delegation of reverse lookup for nets which aren't /8,
+  /16 or /24. [SME: 4249]
+
 * Tue Oct 16 2007 Charlie Brady <charlie_brady@mitel.com> 1.0.0-08
 - Increase default CacheSize to 10M, with corresponding increase
   in DataSize. [SME: 2371]
@@ -416,6 +431,9 @@ caching nameserver
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
 perl createlinks
