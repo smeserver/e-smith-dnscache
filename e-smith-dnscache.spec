@@ -2,7 +2,7 @@ Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
 %define version 1.0.0
-%define release 12
+%define release 13
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -17,6 +17,7 @@ Patch5: e-smith-dnscache-1.0.0-reverse_delegation.patch
 Patch6: e-smith-dnscache-1.0.0.validateNameServer.patch2
 Patch7: e-smith-dnscache-1.0.0-L.root.patch
 Patch8: e-smith-dnscache-1.0.0-dnscacne_forwarder.randomseed.patch
+Patch9: e-smith-dnscache-1.0.0-dnscache_forwarder.startup.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -29,6 +30,11 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Fri Aug 08 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-13
+- Add down file for dnscache.forwarder, and modify dnscache run file
+  so that it brings up the dnscache.forwarder service when it
+  is started. [SME: 4414]
+
 * Fri Aug 08 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-12
 - Ensure that forwarding instance of dnscache has random data
   available on stdin. [SME: 4416]
@@ -440,6 +446,7 @@ caching nameserver
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 perl createlinks
@@ -452,6 +459,7 @@ touch root/var/service/dnscache/down
 mkdir -p root/var/log/dnscache
 mkdir -p root/var/log/dnscache.forwarder
 mkdir -p root/var/service/dnscache.forwarder/root/ip
+touch root/var/service/dnscache.forwarder/down
 touch root/var/service/dnscache.forwarder/root/ip/127
 
 
