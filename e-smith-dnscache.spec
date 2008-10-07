@@ -1,23 +1,15 @@
+# $Id: e-smith-dnscache.spec,v 1.7 2008/10/07 18:01:45 slords Exp $
+
 Summary: e-smith module to configure dnscache
 %define name e-smith-dnscache
 Name: %{name}
-%define version 1.0.0
-%define release 13
+%define version 2.2.0
+%define release 1
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-dnscache-1.0.0.validateNameServer.patch
-Patch1: e-smith-dnscache-1.0.0-dnscacne_servers.patch
-Patch2: e-smith-dnscache-1.0.0-dnscacne_forwarder.patch
-Patch3: e-smith-dnscache-1.0.0-sigpipe.patch
-Patch4: e-smith-dnscache-1.0.0-cachesize.patch
-Patch5: e-smith-dnscache-1.0.0-reverse_delegation.patch
-Patch6: e-smith-dnscache-1.0.0.validateNameServer.patch2
-Patch7: e-smith-dnscache-1.0.0-L.root.patch
-Patch8: e-smith-dnscache-1.0.0-dnscacne_forwarder.randomseed.patch
-Patch9: e-smith-dnscache-1.0.0-dnscache_forwarder.startup.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-lib >= 1.15.1-19
@@ -30,6 +22,9 @@ e-smith server enhancement to configure and run dnscache as a
 caching nameserver
 
 %changelog
+* Tue Oct 7 2008 Shad L. Lords <slords@mail.com> 2.2.0-1.sme
+- Roll new stream to separate sme7/sme8 trees [SME: 4633]
+
 * Fri Aug 08 2008 Charlie Brady <charlie_brady@mitel.com> 1.0.0-13
 - Add down file for dnscache.forwarder, and modify dnscache run file
   so that it brings up the dnscache.forwarder service when it
@@ -437,16 +432,6 @@ caching nameserver
 
 %prep
 %setup
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 
 %build
 perl createlinks
