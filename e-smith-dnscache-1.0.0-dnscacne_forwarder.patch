@@ -1,9 +1,0 @@
-diff -Nur -x '*.orig' -x '*.rej' e-smith-dnscache-1.0.0/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER mezzanine_patched_e-smith-dnscache-1.0.0/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER
---- e-smith-dnscache-1.0.0/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER	2005-04-20 12:32:37.000000000 -0600
-+++ mezzanine_patched_e-smith-dnscache-1.0.0/root/etc/e-smith/templates/var/service/dnscache.forwarder/config/FORWARDER	2007-05-21 22:43:40.000000000 -0600
-@@ -1,4 +1,4 @@
- {
--    (defined $dnscache{'Forwarder'}) ?
-+    (defined $dnscache{'Forwarder'} && $dnscache{'Forwarder'}) ?
- 	"export FORWARDONLY=1" : "";
- }
